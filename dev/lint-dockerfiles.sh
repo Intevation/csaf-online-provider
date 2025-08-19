@@ -7,15 +7,12 @@
 # Pull Hadolint
 docker pull ghcr.io/hadolint/hadolint
 
-# Call Hadolint on each Submodule dockerfile
-LOCAL_PWD=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-
 lint_all_files() {
     LOCAL_PATH="$1"
     (
         cd "./$LOCAL_PATH" || abort 1
         info "Linting Dockerfile in $LOCAL_PATH"
-        docker run --rm -i -v /"${LOCAL_PWD}"/.hadolint.yaml:/.config/hadolint.yaml ghcr.io/hadolint/hadolint < Dockerfile
+        docker run --rm -i -v .hadolint.yaml:/.config/hadolint.yaml ghcr.io/hadolint/hadolint < Dockerfile
     )
 }
 
