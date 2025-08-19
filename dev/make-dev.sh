@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Import OpenSlides utils package
+# Import utils package
 . "$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )/util.sh"
 
 # Processes various development operations
@@ -9,30 +9,28 @@
 help ()
 {
     info "\
-Builds and starts development related images. Intended to be called from main repository makefile
+Builds and starts development related images.
 
 Parameters:
     #1 TARGET       : Name of the makefile target that called this script
+    #2 FLAGS        : Optional Flags (see below)
     #3 ARGS         : Additional parameters that will be appended to the called docker run or docker compose calls
 
 Flags:
     no-cache        : Prevents use of cache when building docker images
-    no-capsule      : Prevents encapsulation of docker build output
+    capsule         : Enables encapsulation of docker build output
 
 Available dev functions:
     dev             : Builds and starts development images
     dev-help        : Print help
     dev-detached    : Builds and starts development images with detach flag. This causes started container to run in the background
-    dev-attached    : Builds and starts development images; enters shell of started image.
-                          If a docker compose file is declared, the \$ARGS parameter determines
+    dev-attached    : Builds and starts development images; enters shell of started image. The \$ARGS parameter determines
                           the specific container id you will enter (default value is equal the service name)
     dev-standalone  : Builds and starts development images; closes them immediately afterwards
     dev-stop        : Stops any currently running images associated with the service or docker compose file
     dev-exec        : Executes command inside container.
-                          Use \$ARGS to declare command that should be used.
-                          If using a docker compose setup, also declare which container the command should be used in.
-    dev-enter       : Enters shell of started container.
-                          If a docker compose file is declared, the \$ARGS parameter determines
+                          Use \$ARGS to declare command that should be used and declare which container the command should be used in.
+    dev-enter       : Enters shell of started container. The \$ARGS parameter determines
                           the specific container id you will enter (default value is equal the service name)
     dev-build       : Builds the development image
     "
@@ -71,11 +69,11 @@ build()
     if [ -n "$NO_CACHE" ]; then local BUILD_ARGS="--no-cache"; fi
 
     # Build all submodules
-    if [ -n "$NO_CAPSULE" ]
+    if [ -n "$CAPSULE" ]
     then
-        docker compose build $BUILD_ARGS
-    else
         build_capsuled "docker compose build $BUILD_ARGS"
+    else
+        docker compose build $BUILD_ARGS
     fi
 }
 
@@ -167,7 +165,7 @@ TEMP_SERVICE=$FLAGS
 for CMD in $TEMP_SERVICE; do
     case "$CMD" in
         "no-cache")     NO_CACHE=true ;;
-        "no-capsule")   NO_CAPSULE=true ;;
+        "capsule")      CAPSULE=true ;;
         *)              FLAGS="$CMD" ;;
     esac
 done
@@ -203,7 +201,6 @@ case "$FUNCTION" in
     "exec")             exec "$ARGS" ;;
     "enter")            attach "$ARGS" ;;
     "build")            build ;;
-    "media-attached")   build && run "-d" && EXEC_COMMAND='-T tests wait-for-it "media:9006"' && exec "$EXEC_COMMAND" && attach "tests" && stop ;; # Special case for media (for now)
     "")                 build && run ;;
     *)                  warn "No command found matching $FUNCTION" && help ;;
 esac

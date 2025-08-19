@@ -1,10 +1,10 @@
 #!/bin/bash
 
+. "$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )/util.sh"
+
 # Executes all linters. Should errors occur, CATCH will be set to 1, causing an erroneous exit code.
 
-echo "########################################################################"
-echo "###################### Run Linters #####################################"
-echo "########################################################################"
+shout "Run Linters"
 
 # Parameters
 while getopts "lscp" FLAG; do
@@ -25,19 +25,22 @@ trap 'if [ -z "$LOCAL" ]; then docker compose -f docker-compose.test.yml down; f
 # Execution
 if [ -z "$LOCAL" ]
 then
-    # Setup
-    make dev
+    info "Building and running dev container"
 
+    # Setup
+    echocmd make dev
+
+    info "Linting"
     # Container Mode
-    eval "$DC exec black --check --diff ${PATHS}"
-    eval "$DC exec isort --check-only --diff ${PATHS}"
-    eval "$DC exec flake8 ${PATHS}"
-    eval "$DC exec mypy -m ${PATHS}"
+    echocmd eval "$DC exec black --check --diff ${PATHS}"
+    echocmd eval "$DC exec isort --check-only --diff ${PATHS}"
+    echocmd eval "$DC exec flake8 ${PATHS}"
+    echocmd eval "$DC exec mypy -m ${PATHS}"
 
 else
     # Local Mode
-    black --diff ${PATHS}
-    isort --diff ${PATHS}
-    flake8 ${PATHS}
-    mypy -m ${PATHS}
+    echocmd black --diff ${PATHS}
+    echocmd isort --diff ${PATHS}
+    echocmd flake8 ${PATHS}
+    echocmd mypy -m ${PATHS}
 fi
