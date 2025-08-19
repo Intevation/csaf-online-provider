@@ -1,0 +1,19 @@
+name: CI - Build and Test Service
+
+on: [ push, pull_request ]
+
+jobs:
+  tests:
+    name: "Tests"
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Build and run
+      run: make dev
+
+    - name: Run Tests
+      run: make run-tests
+
+    - name: Run Lint
+      run: make lint
