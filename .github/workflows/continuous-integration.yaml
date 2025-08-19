@@ -25,10 +25,13 @@ jobs:
     steps:
     - uses: actions/checkout@v5
 
+    - name: Load .env file
+      uses: aarcangeli/load-dotenv@v1
+
     - name: Run ShellCheck
       uses: ludeeus/action-shellcheck@master
       env:
-        SHELLCHECK_OPTS: -e SC1091 -e SC2048
+        SHELLCHECK_OPTS: ${LINTER_SHELLCHECK_OPTS}
 
     - name: Run hadolint
-      run: make lint-devops-dockerfiles
+      run: make lint-dockerfiles

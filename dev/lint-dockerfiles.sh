@@ -12,10 +12,11 @@ lint_all_files() {
     (
         cd "./$LOCAL_PATH" || abort 1
         info "Linting Dockerfile in $LOCAL_PATH"
-        docker run --rm -i -v .hadolint.yaml:/.config/hadolint.yaml ghcr.io/hadolint/hadolint < Dockerfile
+        docker run --rm -i ghcr.io/hadolint/hadolint < Dockerfile
     )
 }
 
 # Lint all directories with Dockerfiles
+lint_all_files dev/act
 lint_all_files backend
 lint_all_files frontend

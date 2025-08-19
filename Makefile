@@ -14,7 +14,7 @@ $(.FLAGS):
 dev dev-help dev-standalone dev-detached dev-attached dev-stop dev-exec dev-enter dev-clean dev-build:
 	@bash dev/make-dev.sh $@ "$(filter-out $@, $(MAKECMDGOALS))" "$(ARGS)"
 
-# Tests
+# Service Tests
 
 run-tests:
 	pytest
@@ -22,8 +22,13 @@ run-tests:
 lint:
 	bash dev/run-lint.sh
 
-lint-devops-dockerfiles:
+# DevOps Tests
+
+lint-dockerfiles:
 	bash dev/lint-dockerfiles.sh
 
-lint-devops-shell-scripts:
+lint-shell-scripts:
 	bash dev/lint-shell-scripts.sh
+
+run-act:
+	bash dev/act/run-act.sh
