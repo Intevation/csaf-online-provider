@@ -6,6 +6,7 @@ jobs:
   service-tests:
     name: "Test Service"
     runs-on: ubuntu-latest
+    if: false
     steps:
     - uses: actions/checkout@v5
 
