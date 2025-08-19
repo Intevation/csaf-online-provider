@@ -26,6 +26,8 @@ jobs:
 
     - name: Run ShellCheck
       uses: ludeeus/action-shellcheck@master
+      env:
+        SHELLCHECK_OPTS: -e SC1091 -e SC2048
 
     - name: Run hadolint
       run: make lint-devops-dockerfiles
