@@ -24,11 +24,8 @@ jobs:
     steps:
     - uses: actions/checkout@v5
 
-    - name: Download shellcheck
-      run: apt install -y shellcheck
-
-    - name: Run shellcheck
-      run: make lint-devops-shell-scripts
+    - name: Run ShellCheck
+      uses: ludeeus/action-shellcheck@master
 
     - name: Run hadolint
       run: make lint-devops-dockerfiles
