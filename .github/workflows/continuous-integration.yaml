@@ -25,7 +25,7 @@ jobs:
     - uses: actions/checkout@v5
 
     - name: Download shellcheck
-      run: apt-get install -y shellcheck
+      run: apt install -y shellcheck
 
     - name: Run shellcheck
       run: make lint-devops-shell-scripts
