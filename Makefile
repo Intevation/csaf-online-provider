@@ -21,3 +21,9 @@ run-tests:
 
 lint:
 	bash dev/run-lint.sh
+
+lint-devops-dockerfiles:
+	bash dev/lint-dockerfiles.sh
+
+lint-devops-shell-scripts:
+	bash dev/lint-shell-scripts.sh

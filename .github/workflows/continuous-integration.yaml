@@ -3,8 +3,8 @@ name: CI - Build and Test Service
 on: [ push, pull_request ]
 
 jobs:
-  tests:
-    name: "Tests"
+  service-tests:
+    name: "Test Service"
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v5
@@ -17,3 +17,18 @@ jobs:
 
     - name: Run Lint
       run: make lint
+
+  devops-linters:
+    name: "Lint DevOps"
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v5
+
+    - name: Download shellcheck
+      run: apt-get install -y shellcheck
+
+    - name: Run shellcheck
+      run: make lint-devops-shell-scripts
+
+    - name: Run hadolint
+      run: make lint-devops-dockerfiles

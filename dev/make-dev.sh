@@ -41,15 +41,18 @@ build_capsuled()
     local FUNC=$1
 
     # Record time
-    local PRE_TIMESTAMP=$(date +%s)
+    PRE_TIMESTAMP=$(date +%s)
+    local PRE_TIMESTAMP
 
     # Build Image
     info "Building image"
     capsule "$FUNC"
     local RESPONSE=$?
 
-    local POST_TIMESTAMP=$(date +%s)
-    local BUILD_TIME=$(( $POST_TIMESTAMP - $PRE_TIMESTAMP ))
+    POST_TIMESTAMP=$(date +%s)
+    local POST_TIMESTAMP
+
+    local BUILD_TIME=$(( POST_TIMESTAMP - PRE_TIMESTAMP ))
     # Output
     if [ "$RESPONSE" != 0 ]
     then
@@ -84,7 +87,7 @@ clean()
     then
         info "No containers to stop"
     else
-        docker stop $(docker ps -aq)
+        docker stop "$(docker ps -aq)"
     fi
 
     info "Removing containers"
@@ -92,7 +95,7 @@ clean()
     then
         info "No containers to remove"
     else
-        docker rm $(docker ps -a -q)
+        docker rm "$(docker ps -a -q)"
     fi
 
     ask n "Do you want to delete ALL images as well?" || abort 0
@@ -101,7 +104,7 @@ clean()
     then
         info "No images to remove"
     else
-        docker rmi -f $(docker images -aq)
+        docker rmi -f "$(docker images -aq)"
     fi
 }
 
@@ -123,7 +126,8 @@ attach()
     if [ -z "$SERVICE" ] && [ -z "$TARGET_CONTAINER" ]
     then
         # Main repository case, use input prompt to determine container
-        local TARGET_CONTAINER=$(input "Which service container should be entered?");
+        TARGET_CONTAINER=$(input "Which service container should be entered?");
+        local TARGET_CONTAINER
         { [ -z "$TARGET_CONTAINER" ] && \info "No service container declared, exiting" && return; }
     else
         # Submodule case
@@ -171,7 +175,6 @@ for CMD in $TEMP_SERVICE; do
 done
 
 # Variables
-CONTAINER_NAME="make-dev-$SERVICE"
 LOCAL_PWD=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 USED_SHELL="sh"
 COMPOSE_FILE="${LOCAL_PWD}/../docker-compose.yml"
@@ -188,7 +191,6 @@ else info "Running $FUNCTION"; fi
 USER_ID=$(id -u)
 GROUP_ID=$(id -g)
 DC="CONTEXT=dev USER_ID=$USER_ID GROUP_ID=$GROUP_ID docker compose -f ${COMPOSE_FILE}"
-IMAGE_TAG="csaf-$SERVICE-dev"
 
 # - Run specific function
 case "$FUNCTION" in
