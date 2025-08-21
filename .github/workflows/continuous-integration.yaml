@@ -25,13 +25,10 @@ jobs:
     steps:
     - uses: actions/checkout@v5
 
-    - name: Load .env file
-      uses: aarcangeli/load-dotenv@v1
-
-    - name: Run ShellCheck
-      uses: ludeeus/action-shellcheck@master
-      env:
-        SHELLCHECK_OPTS: ${LINTER_SHELLCHECK_OPTS}
-
     - name: Run hadolint
       run: make lint-dockerfiles
+
+    - name: Run shellcheck
+      run: |
+        sudo apt update && sudo apt install shellcheck
+        make lint-shell-scripts
