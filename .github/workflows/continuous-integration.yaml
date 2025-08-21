@@ -1,0 +1,34 @@
+name: CI - Build and Test Service
+
+on: [ push, pull_request ]
+
+jobs:
+  service-tests:
+    name: "Test Service"
+    runs-on: ubuntu-latest
+    if: false
+    steps:
+    - uses: actions/checkout@v5
+
+    - name: Build and run
+      run: make dev
+
+    - name: Run Tests
+      run: make run-tests
+
+    - name: Run Lint
+      run: make lint
+
+  devops-linters:
+    name: "Lint DevOps"
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v5
+
+    - name: Run hadolint
+      run: make lint-dockerfiles
+
+    - name: Run shellcheck
+      run: |
+        sudo apt update && sudo apt install shellcheck
+        make lint-shell-scripts
